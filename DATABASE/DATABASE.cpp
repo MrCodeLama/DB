@@ -33,6 +33,9 @@ struct Dealer
     int FirstCarNumberInFile;
 };
 
+Car CarReturn;
+Dealer DealerReturn;
+
 int NumberOfElementsInFile(bool _isSlave)
 {
     ifstream readfile((_isSlave ? SLAVE_FILEPATH : MASTER_FILEPATH), OPEN_MODE);
@@ -75,8 +78,6 @@ int NumberOfCarsInDealer(int DealerID)
     if (!ReadMaster1.good())
         cout << "Error NumberOfCarsInDealer M1";
 
-
-
     if (checker)
     {
         ifstream ReadSlave1(SLAVE_FILEPATH, OPEN_MODE);
@@ -97,10 +98,9 @@ int NumberOfCarsInDealer(int DealerID)
     else
         cout << "Error NumberOfCarsInDealer. No dealer found";
 
-
-
     return counter;
 }
+
 
 void GetAllDealersInfo()
 {
@@ -142,6 +142,7 @@ void GetAllDealersInfo()
     if (!OutputFile2.good())
         cout << "Error GetAllDealersInfo O2";
 }
+
 
 void GetAllCarsInfo()
 {
@@ -260,29 +261,24 @@ void UpdateCar(int CarID)
     {
         cout << "Enter Value to change: 0 - CarID 1 - Model 2 - HP 3 - MaxSpeed 4 - Weigth\n";
         int n;
-        int temp;
         cin >> n;
         cout << "Enter new value:\n";
         switch (n)
         {
         case 0:
-            cin >> temp;
-            tempCar.CarID = temp;
+            cin >> tempCar.CarID;
             break;
         case 1:
             cin.getline((char*)&tempCar.Model, SHORT_TEXT);
             break;
         case 2:
-            cin >> temp;
-            tempCar.HP = temp;
+            cin >> tempCar.HP;
             break;
         case 3:
-            cin >> temp;
-            tempCar.MaxSpeed = temp;
+            cin >> tempCar.MaxSpeed;
             break;
         case 4:
-            cin >> temp;
-            tempCar.Weigth = temp;
+            cin >> tempCar.Weigth;
             break;
         default:
             cout << "Error UpdateCar not in range 0-4";
@@ -297,9 +293,8 @@ void UpdateCar(int CarID)
         if (!WriteSlave2.good())
             cout << "Error UpdateCar S2";
     }
-    else {
+    else
         cout << "Error UpdateCar No car\n";
-    }
 }
 
 void UpdateDealer(int DealerID)
@@ -465,27 +460,8 @@ void AddDealer(Dealer NewDealer)
         cout << "Error AddDealer M1";
 }
 
-void Menu()
-{
-    int n = 0;
-    cout <<
-        "get-m 1 \n" <<
-        "get-s 2 \n" <<
-        "del-m 3 \n" <<
-        "del-s 4 \n" <<
-        "update-m 5 \n" <<
-        "update-s 6 \n" <<
-        "insert-m 7 \n" <<
-        "insert-s 8 \n" <<
-        "calc-m 9 \n" <<
-        "calc-s 10 \n" <<
-        "ut-m 11 \n" <<
-        "ut-s 12\n";
-    //executeTasks();
-}
-
-void makeFiles(bool _removeFiles) {
-    if (_removeFiles)
+void makeFiles(bool _removeOldFiles) {
+    if (_removeOldFiles)
     {
         remove(MASTER_FILEPATH);
         remove(SLAVE_FILEPATH);
@@ -531,6 +507,7 @@ void makeFiles(bool _removeFiles) {
 
 }
 
+
 Car CreateCar()
 {
     Car tempCar;
@@ -566,11 +543,15 @@ Dealer CreateDealer()
     return tempDealer;
 }
 
-void DeleteCar(int dealerID)
+void DeleteCar(int CarID)
 {
 
 }
 
+void DeleteCarsFromDealer(int DealerID)
+{
+
+}
 void DeleteDealer(int DealerID)
 {
     int NumberOfDealers = NumberOfElementsInFile(false);
@@ -616,14 +597,14 @@ void DeleteDealer(int DealerID)
         {
             if (j == i)
                 continue;
-            
+
             ifstream ReadMaster2(MASTER_FILEPATH, OPEN_MODE);
 
             ReadMaster2.seekg(j * sizeof(Dealer), ReadMaster2.beg);
             ReadMaster2.read((char*)&tempDealer, sizeof(Dealer));
 
             ReadMaster2.close();
-            if (!ReadMaster1.good())
+            if (!ReadMaster2.good())
                 cout << "Error DeleteDealer M2";
 
             ofstream WriteTemp1(TEMP_FILEPATH, OPEN_MODE);
@@ -638,38 +619,150 @@ void DeleteDealer(int DealerID)
 
         remove(MASTER_FILEPATH);
         rename(TEMP_FILEPATH, MASTER_FILEPATH);
-        
+
     }
     else {
         cout << "Error UpdateDealer Dealer doesnt exists\n";
     }
 }
-
-void test(bool test1)
+void test(bool test1, bool test2, bool test3, bool test4)
 {
-    if (!test1)
+    makeFiles(true);
+    if (test1)
     {
-        Dealer tempDealer;
         for (int i = 0; i < 5; i++)
         {
-            tempDealer = CreateDealer();
-            AddDealer(tempDealer);
+            AddDealer(CreateDealer());
         }
+        AddCar(3, CreateCar());
         AddCar(1, CreateCar());
+        AddCar(3, CreateCar());
         AddCar(2, CreateCar());
         AddCar(2, CreateCar());
         AddCar(3, CreateCar());
-        AddCar(3, CreateCar());
-        AddCar(3, CreateCar());
+        GetAllCarsInfo();
+        GetAllDealersInfo();
     }
-    
-    DeleteDealer(1);
-    GetAllCarsInfo();
-    GetAllDealersInfo();
+    if (test2)
+    {
+        int carID;
+        cin >> carID;
+        DeleteDealer(2);
+        DeleteCar(carID);
+        GetAllCarsInfo();
+        GetAllDealersInfo();
+    }
+    if (test3)
+    {
+        AddDealer(CreateDealer());
+        AddCar(4, CreateCar());
+    }
+    if (test4)
+    {
+        int carID;
+        cin >> carID;
+        UpdateDealer(3);
+        UpdateCar(carID);
+    }
 }
+void Menu()
+{
+    int taskNumber = 0;
+    int carId;
+    int dealerId;
+    while (true)
+    {
+        cout <<
+            "Exit - 0\n" <<
+            "Get car - 1\n" <<
+            "Get dealer - 2\n" <<
+            "Delete car - 3\n" <<
+            "Delete dealer - 4\n" <<
+            "Update car - 5\n" <<
+            "Update dealer - 6\n" <<
+            "Add car - 7\n" <<
+            "Add dealer - 8\n" <<
+            "Calculate all dealers - 9\n" <<
+            "Calculate cars in dealer - 10\n" <<
+            "Calculate all cars - 11\n" <<
+            "Print dealers info - 12\n" <<
+            "Print cars info - 13\n";
+        cin >> taskNumber;
+
+        switch (taskNumber)
+        {
+        case 0:
+            exit(0);
+            break;
+        case 1:
+
+            cout << "Enter car id\n";
+            cin >> carId;
+            CarReturn = GetCar(carId);
+            break;
+        case 2:
+
+            cout << "Enter dealer id\n";
+            cin >> dealerId;
+            DealerReturn = GetDealer(dealerId);
+            break;
+        case 3:
+            cout << "Enter car id\n";
+            cin >> carId;
+            DeleteCar(carId);
+            break;
+        case 4:
+            cout << "Enter dealer id\n";
+            cin >> dealerId;
+            DeleteDealer(dealerId);
+            break;
+        case 5:
+            cout << "Enter car id\n";
+            cin >> carId;
+            UpdateCar(carId);
+            break;
+        case 6:
+            cout << "Enter dealer id\n";
+            cin >> dealerId;
+            UpdateDealer(dealerId);
+            break;
+        case 7:
+            cout << "Enter dealer id\n";
+            cin >> dealerId;
+            AddCar(dealerId, CreateCar());
+            break;
+        case 8:
+            AddDealer(CreateDealer());
+            break;
+        case 9:
+            cout << NumberOfElementsInFile(false) << "\n";
+            break;
+        case 10:
+            cout << "Enter dealer id\n";
+            cin >> dealerId;
+            cout << NumberOfCarsInDealer(dealerId) << "\n";
+            break;
+        case 11:
+            cout << NumberOfElementsInFile(true) << "\n";
+            break;
+        case 12:
+            GetAllDealersInfo();
+            cout << "Check " << OUTPUT_DEALERS_FILEPATH << " file\n";
+            break;
+        case 13:
+            GetAllCarsInfo();
+            cout << "Check " << OUTPUT_CARS_FILEPATH << " file\n";
+            break;
+        default:
+            cout << "Error executeTasks not in range 1-13\n";
+            break;
+        }
+    }
+}
+
 int main()
 {
     makeFiles(false);
-    test(true);
+    Menu();
     
 }
