@@ -31,6 +31,8 @@
 *.out
 *.app
 
-output.txt
+# Output files
+outputCars.txt
+outputDealers.txt
 Dealers.dat
 Cars.dat

@@ -3,7 +3,9 @@
 #define SHORT_TEXT 50
 #define MASTER_FILEPATH "Dealers.dat"
 #define SLAVE_FILEPATH "Cars.dat"
-#define OUTPUT_FILEPATH "output.txt"
+#define OUTPUT_CARS_FILEPATH "outputCars.txt"
+#define OUTPUT_DEALERS_FILEPATH "outputDealers.txt"
+#define TEMP_FILEPATH "temp.dat"
 
 #include <iostream>
 #include <fstream>
@@ -31,7 +33,6 @@ struct Dealer
     int FirstCarNumberInFile;
 };
 
-//Number of elements in file(true if Slave)
 int NumberOfElementsInFile(bool _isSlave)
 {
     ifstream readfile((_isSlave ? SLAVE_FILEPATH : MASTER_FILEPATH), OPEN_MODE);
@@ -46,7 +47,6 @@ int NumberOfElementsInFile(bool _isSlave)
     return rcount;
 }
 
-//Number of Cars in dealer
 int NumberOfCarsInDealer(int DealerID)
 {
     int NumberOfDealers = NumberOfElementsInFile(false);
@@ -75,7 +75,7 @@ int NumberOfCarsInDealer(int DealerID)
     if (!ReadMaster1.good())
         cout << "Error NumberOfCarsInDealer M1";
 
-    
+
 
     if (checker)
     {
@@ -97,16 +97,15 @@ int NumberOfCarsInDealer(int DealerID)
     else
         cout << "Error NumberOfCarsInDealer. No dealer found";
 
-    
+
 
     return counter;
 }
 
-//Get all info about dealer
 void GetAllDealersInfo()
 {
     ofstream OutputFile1;
-    OutputFile1.open(OUTPUT_FILEPATH, std::ofstream::out | std::ofstream::trunc);
+    OutputFile1.open(OUTPUT_DEALERS_FILEPATH, std::ofstream::out | std::ofstream::trunc);
     OutputFile1.close();
     if (!OutputFile1.good())
         cout << "Error GetAllDealersInfo O1";
@@ -116,7 +115,7 @@ void GetAllDealersInfo()
     int NumberOfDealers = NumberOfElementsInFile(false);
     Dealer tempDealer;
 
-    ofstream OutputFile2(OUTPUT_FILEPATH);
+    ofstream OutputFile2(OUTPUT_DEALERS_FILEPATH);
 
     for (; i < NumberOfDealers; i++)
     {
@@ -144,11 +143,10 @@ void GetAllDealersInfo()
         cout << "Error GetAllDealersInfo O2";
 }
 
-//Get all info about cars
 void GetAllCarsInfo()
 {
     ofstream OutputFile1;
-    OutputFile1.open(OUTPUT_FILEPATH, std::ofstream::out | std::ofstream::trunc);
+    OutputFile1.open(OUTPUT_CARS_FILEPATH, std::ofstream::out | std::ofstream::trunc);
     OutputFile1.close();
     if (!OutputFile1.good())
         cout << "Error GetAllCarsInfo O1";
@@ -158,7 +156,7 @@ void GetAllCarsInfo()
     int NumberOfCars = NumberOfElementsInFile(true);
     Car tempCar;
 
-    ofstream OutputFile2(OUTPUT_FILEPATH);
+    ofstream OutputFile2(OUTPUT_CARS_FILEPATH);
 
     for (; i < NumberOfCars; i++)
     {
@@ -188,7 +186,6 @@ void GetAllCarsInfo()
         cout << "Error GetAllCarsInfo O2";
 }
 
-//get the Car object
 Car GetCar(int CarID)
 {
     int NumerOfCars = NumberOfElementsInFile(true);
@@ -212,7 +209,6 @@ Car GetCar(int CarID)
     return tempCar;
 }
 
-//get the dealer object
 Dealer GetDealer(int DealerID)
 {
     int NumberOfDealers = NumberOfElementsInFile(false);
@@ -236,7 +232,6 @@ Dealer GetDealer(int DealerID)
     return tempDealer;
 }
 
-//Change parameter of Car
 void UpdateCar(int CarID)
 {
     int NumberOfCars = NumberOfElementsInFile(true);
@@ -307,7 +302,6 @@ void UpdateCar(int CarID)
     }
 }
 
-//Change parameter of dealer
 void UpdateDealer(int DealerID)
 {
     int NumberOfDealers = NumberOfElementsInFile(false);
@@ -337,7 +331,7 @@ void UpdateDealer(int DealerID)
     if (_isDealerExists)
     {
         cout << "Enter Value to change: 0 - ID 1 - Name 2 - Adress\n";
-        
+
         cin >> TaskNumber;
         cout << "Enter new value:\n";
         switch (TaskNumber)
@@ -357,7 +351,7 @@ void UpdateDealer(int DealerID)
             break;
         }
 
-        ofstream WriteMaster2(SLAVE_FILEPATH, OPEN_MODE);
+        ofstream WriteMaster2(MASTER_FILEPATH, OPEN_MODE);
         WriteMaster2.seekp(i * sizeof(Dealer), WriteMaster2.beg);
         WriteMaster2.write((char*)&tempDealer, sizeof(Dealer));
 
@@ -370,8 +364,7 @@ void UpdateDealer(int DealerID)
     }
 }
 
-//Add car to dealer
-void AddCar(int DealerID, Car NewCar)//problem line marked
+void AddCar(int DealerID, Car NewCar)
 {
     int NumberOfDealers = NumberOfElementsInFile(false);
     int NumberOfCars = NumberOfElementsInFile(true);
@@ -430,7 +423,7 @@ void AddCar(int DealerID, Car NewCar)//problem line marked
         {
             ifstream ReadSlave1(SLAVE_FILEPATH, OPEN_MODE);
 
-            while (currentCarNumber != -1) //
+            while (currentCarNumber != -1)
             {
                 ReadSlave1.seekg(currentCarNumber * sizeof(Car), ReadSlave1.beg);
                 ReadSlave1.read((char*)&tempCar, sizeof(Car));
@@ -460,7 +453,6 @@ void AddCar(int DealerID, Car NewCar)//problem line marked
     }
 }
 
-//Add dealer
 void AddDealer(Dealer NewDealer)
 {
     ofstream WriteMaster1(MASTER_FILEPATH, OPEN_MODE);
@@ -492,11 +484,15 @@ void Menu()
     //executeTasks();
 }
 
-void makeFiles() {
-    remove(MASTER_FILEPATH);
-    remove(SLAVE_FILEPATH);
-    remove(OUTPUT_FILEPATH);
-    
+void makeFiles(bool _removeFiles) {
+    if (_removeFiles)
+    {
+        remove(MASTER_FILEPATH);
+        remove(SLAVE_FILEPATH);
+        remove(OUTPUT_CARS_FILEPATH);
+        remove(OUTPUT_DEALERS_FILEPATH);
+    }
+
     ifstream master(MASTER_FILEPATH, OPEN_MODE);
     bool isopen = master.is_open();
     master.close();
@@ -514,132 +510,166 @@ void makeFiles() {
         ofstream slave(SLAVE_FILEPATH);
         slave.close();
     }
-    
-    ifstream output(OUTPUT_FILEPATH, OPEN_MODE);
-    isopen = output.is_open();
-    output.close();
+
+    ifstream outputCars(OUTPUT_CARS_FILEPATH, OPEN_MODE);
+    isopen = outputCars.is_open();
+    outputCars.close();
 
     if (!isopen) {
-        ofstream output(OUTPUT_FILEPATH);
-        output.close();
+        ofstream outputCars(OUTPUT_CARS_FILEPATH);
+        outputCars.close();
     }
 
-    
+    ifstream outputDealers(OUTPUT_DEALERS_FILEPATH, OPEN_MODE);
+    isopen = outputDealers.is_open();
+    outputDealers.close();
+
+    if (!isopen) {
+        ofstream outputDealers(OUTPUT_DEALERS_FILEPATH);
+        outputDealers.close();
+    }
+
 }
 
-int main()
+Car CreateCar()
 {
-    makeFiles();
+    Car tempCar;
 
-    const int SIZE = 5;
-    Dealer old_dealers[SIZE] = {
-        {
-            {'B', 'M', 'W'}, 
-            {'K', 'y', 'i', 'v'},
-            1,
-            -1
-        },
-        {
-            {'B', 'e', 'n', 'z'},
-            {'L', 'v', 'i', 'v'},
-            2,
-            -1
-        },
-        {
-            {'A', 'u', 'd', 'i'},
-            {'Z', 'h', 'i', 't', 'o', 'm', 'i', 'r'},
-            3,
-            -1
-        },
-        {
-            {'A', 'u', 'd', 'i'},
-            {'K', 'a', 'n', 'i', 'v'},
-            4,
-            -1
-        },
-        {
-            {'B', 'M', 'W'},
-            {'L', 'v', 'i', 'v'},
-            5,
-            -1
-        },
-    };
+    cout << "Enter car model:\n";
+    cin >> tempCar.Model;
+    cout << "Enter car id:\n";
+    cin >> tempCar.CarID;
+    cout << "Enter car HP:\n";
+    cin >> tempCar.HP;
+    cout << "Enter car MaxSpeed:\n";
+    cin >> tempCar.MaxSpeed;
+    cout << "Enter car Weigth:\n";
+    cin >> tempCar.Weigth;
+    tempCar.NumberOfNextCarInFile = -1;
 
-    for (int i = 0; i < SIZE; i++)
+    return tempCar;
+}
+
+Dealer CreateDealer()
+{
+    Dealer tempDealer;
+
+    cout << "Enter dealer Name:\n";
+    cin >> tempDealer.Name;
+    cout << "Enter dealer Adress:\n";
+    cin >> tempDealer.Adress;
+    cout << "Enter dealer ID:\n";
+    cin >> tempDealer.DealerID;
+    cout << "\n\n";
+    tempDealer.FirstCarNumberInFile = -1;
+
+    return tempDealer;
+}
+
+void DeleteCar(int dealerID)
+{
+
+}
+
+void DeleteDealer(int DealerID)
+{
+    int NumberOfDealers = NumberOfElementsInFile(false);
+    int i = 0;
+    Dealer tempDealer;
+    bool _isDealerExists = false;
+    int counter = 0;
+
+    ifstream ReadMaster1(MASTER_FILEPATH, OPEN_MODE);
+
+    for (; i < NumberOfDealers; i++)
     {
-        AddDealer(old_dealers[i]);
+        ReadMaster1.seekg(i * sizeof(Dealer), ReadMaster1.beg);
+        ReadMaster1.read((char*)&tempDealer, sizeof(Dealer));
+        if (tempDealer.DealerID == DealerID)
+        {
+            _isDealerExists = true;
+            break;
+        }
     }
 
-    Car M3 =
+    ReadMaster1.close();
+    if (!ReadMaster1.good())
+        cout << "Error DeleteDealer M1";
+
+    if (_isDealerExists)
     {
-        {'M', '3'},
-        1,
-        345,
-        300,
-        1500,
-        -1
-    };
+        if (tempDealer.FirstCarNumberInFile != -1)
+        {
+            DeleteCar(tempDealer.DealerID);//how to make removal of cars
+        }
 
-    Car M2 =
+        ifstream tempFile(TEMP_FILEPATH, OPEN_MODE);
+        bool isopen = tempFile.is_open();
+        tempFile.close();
+
+        if (!isopen) {
+            ofstream tempFile(TEMP_FILEPATH);
+            tempFile.close();
+        }
+
+        for (int j = 0; j < NumberOfDealers; j++)
+        {
+            if (j == i)
+                continue;
+            
+            ifstream ReadMaster2(MASTER_FILEPATH, OPEN_MODE);
+
+            ReadMaster2.seekg(j * sizeof(Dealer), ReadMaster2.beg);
+            ReadMaster2.read((char*)&tempDealer, sizeof(Dealer));
+
+            ReadMaster2.close();
+            if (!ReadMaster1.good())
+                cout << "Error DeleteDealer M2";
+
+            ofstream WriteTemp1(TEMP_FILEPATH, OPEN_MODE);
+
+            WriteTemp1.seekp(counter++ * sizeof(Dealer), WriteTemp1.beg);
+            WriteTemp1.write((char*)&tempDealer, sizeof(Dealer));
+
+            WriteTemp1.close();
+            if (!WriteTemp1.good())
+                cout << "Error DeleteDealer T1";
+        }
+
+        remove(MASTER_FILEPATH);
+        rename(TEMP_FILEPATH, MASTER_FILEPATH);
+        
+    }
+    else {
+        cout << "Error UpdateDealer Dealer doesnt exists\n";
+    }
+}
+
+void test(bool test1)
+{
+    if (!test1)
     {
-        {'M', '2'},
-        2,
-        300,
-        230,
-        1300,
-        -1
-    };
-
-    Car G63 =
-    {
-        {'A', 'M', 'G'},
-        3,
-        200,
-        210,
-        3000,
-        -1
-    };
-
-    Car A4 =
-    {
-        {'A', '4'},
-        4,
-        310,
-        210,
-        2400,
-        -1
-    };
-
-    Car etron =
-    {
-        {'E', '-', 't', 'r', 'o', 'n'},
-        5,
-        260,
-        210,
-        2400,
-        -1
-    };
-
-    Car Rs7 =
-    {
-        {'R', 's', '-', '7'},
-        6,
-        380,
-        210,
-        2600,
-        -1
-    };
-
-    AddCar(1, M3);
-    AddCar(1, M2);
-    AddCar(2, G63);
-    AddCar(4, A4);
-    AddCar(4, etron);
-    AddCar(4, Rs7);
-
-    //GetAllDealersInfo();
-
-   // cout << NumberOfElementsInFile(false);
-    //cout << "\n" << NumberOfElementsInFile(true) << "\n";
+        Dealer tempDealer;
+        for (int i = 0; i < 5; i++)
+        {
+            tempDealer = CreateDealer();
+            AddDealer(tempDealer);
+        }
+        AddCar(1, CreateCar());
+        AddCar(2, CreateCar());
+        AddCar(2, CreateCar());
+        AddCar(3, CreateCar());
+        AddCar(3, CreateCar());
+        AddCar(3, CreateCar());
+    }
+    
+    DeleteDealer(1);
     GetAllCarsInfo();
+    GetAllDealersInfo();
+}
+int main()
+{
+    makeFiles(false);
+    test(true);
+    
 }
