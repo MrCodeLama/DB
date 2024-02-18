@@ -1405,9 +1405,187 @@ void test3()
     GetAllDealersInfo();
 }
 
+void test4()
+{
+    makeFiles(true);
+    const int SIZE = 5;
+    Dealer old_dealers[SIZE] = {
+        {
+            {'B', 'M', 'W'},
+            {'K', 'y', 'i', 'v'},
+            1,
+            -1
+        },
+        {
+            {'B', 'e', 'n', 'z'},
+            {'L', 'v', 'i', 'v'},
+            2,
+            -1
+        },
+        {
+            {'A', 'u', 'd', 'i'},
+            {'Z', 'h', 'i', 't', 'o', 'm', 'i', 'r'},
+            3,
+            -1
+        },
+        {
+            {'A', 'u', 'd', 'i'},
+            {'K', 'a', 'n', 'i', 'v'},
+            4,
+            -1
+        },
+        {
+            {'B', 'M', 'W'},
+            {'L', 'v', 'i', 'v'},
+            5,
+            -1
+        },
+    };
+
+    for (int i = 0; i < SIZE; i++)
+    {
+        AddDealer(old_dealers[i]);
+    }
+
+    Car M3 =
+    {
+        {'M', '3'},
+        1,
+        345,
+        300,
+        1500,
+        -1
+    };
+
+    Car M2 =
+    {
+        {'M', '2'},
+        2,
+        300,
+        230,
+        1300,
+        -1
+    };
+
+    Car G63 =
+    {
+        {'A', 'M', 'G'},
+        3,
+        200,
+        210,
+        3000,
+        -1
+    };
+
+    Car A4 =
+    {
+        {'A', '4'},
+        4,
+        310,
+        210,
+        2400,
+        -1
+    };
+
+    Car etron =
+    {
+        {'E', '-', 't', 'r', 'o', 'n'},
+        5,
+        260,
+        210,
+        2400,
+        -1
+    };
+
+    Car Rs7 =
+    {
+        {'R', 's', '-', '7'},
+        6,
+        380,
+        210,
+        2600,
+        -1
+    };
+
+    AddCar(1, M3);
+    AddCar(1, M2);
+    AddCar(2, G63);
+    AddCar(4, A4);
+    AddCar(4, etron);
+    AddCar(4, Rs7);
+
+    DeleteDealer(1);
+    DeleteCar(5);
+
+    AddDealer
+    (
+        {
+            {'A', 'u', 'd', 'i'},
+            {'O','d','e','s','s','a'},
+            10,
+            -1
+        }
+    );
+    AddCar
+    (
+        10,
+        {
+        {'E', '-', 't', 'r', 'o', 'n', '-', 'G', 'T'},
+        599,
+        345,
+        111,
+        3000,
+        -1
+        }
+    );
+    printAllDealers();
+    int temp;
+    cout << "Enter Delaer ID\n";
+    cin >> temp;
+    UpdateDealer(temp);
+    printAllCars();
+    cout << "Enter Car ID\n";
+    cin >> temp;
+    UpdateCar(temp);
+
+    GetAllCarsInfo();
+    GetAllDealersInfo();
+}
+
+void runTests()
+{
+    int n = 0;
+    while (n != -1)
+    {
+        cout << "Enter the number of test(1-4); -1 to exit :\n";
+        cin >> n;
+        switch (n)
+        {
+        case 1:
+            test1();
+            cout << "Test " << n << " completed!\n\n";
+            break;
+        case 2:
+            test2();
+            cout << "Test " << n << " completed!\n\n";
+            break;
+        case 3:
+            test3();
+            cout << "Test " << n << " completed!\n\n";
+            break;
+        case 4:
+            test4();
+            cout << "Test " << n << " completed!\n\n";
+            break;
+        default:
+            break;
+        }
+        
+    }
+}
 int main()
 {
     //makeFiles(false);
     //Menu();
-    test3();
+    runTests();
 }
