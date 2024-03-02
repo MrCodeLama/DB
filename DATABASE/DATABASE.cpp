@@ -17,6 +17,7 @@ using namespace std;
 //slave
 struct Car
 {
+    char _isDeleted;
     char Model[SHORT_TEXT];
     int CarID;
     int HP;
@@ -28,6 +29,7 @@ struct Car
 //master
 struct Dealer
 {
+    char _isDeleted;
     char Name[SHORT_TEXT];
     char Adress[LONG_TEXT];
     int DealerID;
@@ -1585,7 +1587,7 @@ void runTests()
 }
 int main()
 {
-    //makeFiles(false);
-    //Menu();
-    runTests();
+    makeFiles(false);
+    Menu();
+    //runTests();
 }
