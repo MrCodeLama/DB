@@ -1,0 +1,25 @@
+Name: BMW
+Adress: Kyiv
+DealerID: 1
+FirstMemberNumberInFile: 0
+
+Name: Benz
+Adress: Lviv
+DealerID: 2
+FirstMemberNumberInFile: 2
+
+Name: Audi
+Adress: Zhitomir
+DealerID: 3
+FirstMemberNumberInFile: -1
+
+Name: Audi
+Adress: Kaniv
+DealerID: 4
+FirstMemberNumberInFile: 3
+
+Name: BMW
+Adress: Lviv
+DealerID: 5
+FirstMemberNumberInFile: -1
+

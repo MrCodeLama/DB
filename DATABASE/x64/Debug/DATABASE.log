@@ -1,3 +1,4 @@
 ﻿  DATABASE.cpp
-C:\Users\lenov\OneDrive\Документи\GitHub\DB\DATABASE\DATABASE.cpp(51,12): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\lenov\OneDrive\Документи\GitHub\DB\DATABASE\DATABASE.cpp(48,12): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\lenov\OneDrive\Документи\GitHub\DB\DATABASE\DATABASE.cpp(896,13): warning C4129: 'N': unrecognized character escape sequence
   DATABASE.vcxproj -> C:\Users\lenov\OneDrive\Документи\GitHub\DB\x64\Debug\DATABASE.exe

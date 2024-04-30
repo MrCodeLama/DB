@@ -1,0 +1,24 @@
+Model: M3
+Car ID: 1
+NumberOfNextMemberInFile: 1
+
+Model: M2
+Car ID: 2
+NumberOfNextMemberInFile: -1
+
+Model: G63
+Car ID: 3
+NumberOfNextMemberInFile: -1
+
+Model: A4
+Car ID: 4
+NumberOfNextMemberInFile: 4
+
+Model: et
+Car ID: 5
+NumberOfNextMemberInFile: 5
+
+Model: rs
+Car ID: 6
+NumberOfNextMemberInFile: -1
+
